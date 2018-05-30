@@ -5,8 +5,8 @@
 # Mail: wh0197m@gmail.com
 # Created Time: Web 16 May 2018 03:46:23 PM CST
 # Usage: sh install.sh
-# Description: install gulu's requirements
-# Attention: Gulu help u be efficient
+# Description: install punk's requirements
+# Attention: punk help u be efficient
 ################################################################
 
 # --- Basic Syntax ---
@@ -61,7 +61,7 @@ ctrl_c() {
 
 # Show Banner
 banner() {
-	printf "${CYAN} ___________________ <Ghost in the Shell>___________________\n"
+	printf "${CYAN}┌------------------- <Ghost in the Shell>-------------------┐\n"
 	printf "|                                                           |\n"
 	printf "${CYAN}|${PWY}   ______      __              ${GWR}     ____              __   ${CEND}${CYAN}|\n"
 	printf "${CYAN}|${PWY}  / ______  __/ /_  ___  _____ ${GWR}    / __ \__  ______  / /__ ${CEND}${CYAN}|\n"
@@ -69,25 +69,25 @@ banner() {
 	printf "${CYAN}|${PWY}/ /___/ /_/ / /_/ /  __/ /    ${GWR} ${PWY} ${GWR} / ____/ /_/ / / / / ,<    ${CEND}${CYAN}|\n"
 	printf "${CYAN}|${PWY}\____/\__, /_.___/\___/_/      ${GWR} /_/    \__,_/_/ /_/_/|_|   ${CEND}${CYAN}|\n"
 	printf "${CYAN}|${PWY}     /____/                    ${GWR}                            ${CEND}${CYAN}|\n"
-	printf "${CYAN}|___________________The Greatest Animation__________________|\n"
+	printf "${CYAN}└-------------------The Greatest Animation------------------┘\n"
 }
 
 # Error Messages
 os_not_match() {
-	printf "😰 ${RED}Sorry, this tool only works on ${CYAN}MacOS ${RED}or ${BLUE}CentOS7${CEND}\n"
+	printf "😰  ${RED}Sorry, this tool only works on ${CYAN}MacOS ${RED}or ${BLUE}CentOS7${CEND}\n"
 	exit 0
 }
 
 requirement_not_exist() {
-	printf "🙈 ${RED}$1 missing, we will install it for u!\n"
+	printf "🙈  ${RED}$1 missing, we will install it for u!${CEND}\n"
 }
 
 requirement_exist() {
-	printf "✅ ${GREEN}$1 already exists.\n"
+	printf "✅  ${GREEN}$1 already exists.${CEND}\n"
 }
 
 need_install_manually() {
-	printf "🚨 ${RED}$1 need install first, plz do it manually.\n"
+	printf "🚨  ${RED}$1 need install first, plz do it manually.${CEND}\n"
 }
 
 # define 0: mac
@@ -121,7 +121,7 @@ loading() {
 	# it will return 1 if pid not exists
 	while kill -0 "$1" 2>/dev/null; do 
 		i=$(( (i+1) %4 ))
-		printf "\bs%" "${spin:$i:1}"
+		printf "\b%s" "${icon:$i:1}"
 		sleep 0.05
 	done
 	tput cnorm
@@ -141,7 +141,7 @@ install_spawn() {
 			requirement_not_exist "$1"
 			sudo brew install "$1" > /dev/null 2>&1 &
 			loading $!
-			printf "\b💯 ${GREEN}Installed!"
+			printf "\b✅  ${GREEN}$1 was Installed!${CEND}\n"
 		else
 			requirement_exist "$1"
 		fi
@@ -150,7 +150,7 @@ install_spawn() {
 			requirement_not_exist "$2"
 			sudo yum install -y "$2" > /dev/null 2>&1 &
 			loading $!
-			printf "\b💯 ${GREEN}Installed!"
+			printf "\b✅  ${GREEN}$2 was Installed!${CEND}\n"
 		else
 			requirement_exist "$2"
 		fi
@@ -178,18 +178,18 @@ verify_pkm() {
 # get the answer
 get_answer() {
 	while true; do
-		printf "${BLUE} 👉 $1 "
+		printf "${BLUE}👉   $1 "
 
 		# default no
 		if [[ $2 == "no" ]];then
-			printf "[yes | ${GREEN}no${CEND}]"
+			printf "[yes | ${GREEN}no${CEND}${BLUE}]${CEND}"
 			read ans
 			if [[ -z "$ans" ]];then
 				ans="no"
 			fi
 		# default yes
 		else
-			printf "[${GREEN}yes${CEND} | no]"
+			printf "[${GREEN}yes${CEND} | no${BLUE}]${CEND}"
 			read ans
 			if [[ -z "$ans" ]];then
 				ans="yes"
@@ -202,7 +202,7 @@ get_answer() {
 		elif [[ $ans == "no" ]] || [[ $ans == "n" ]];then
 			return 1
 		else
-			printf "😭 ${RED}Invalid answer, plz answer with 'yes' or 'no'.\n"
+			printf "😭  ${RED}Invalid answer, plz answer with 'yes' or 'no'.${CEND}\n"
 		fi
 	done
 }
@@ -210,7 +210,7 @@ get_answer() {
 # asking
 # asking CONST question answer
 asking() {
-	printf "💡 ${BLUE}$2 "
+	printf "💡   ${BLUE}$2 "
 	printf "${GREEN}$3${CEND}"
 
 	read ans
@@ -224,12 +224,10 @@ asking() {
 # setup autocomplete
 # key command: compgen, complete
 # COMPREPLY=() define array
-setup_autocomplete
-
-printf "\n🤟 ${GREEN}"() {
+setup_autocomplete() {
 	# autocomplete just work for zsh shell, so u need verify it was installed
-cat > $PUNK_AUTO << EOF
-	if [[ ! -z "$ZSH_VERSION" ]]
+sudo bash -c 'cat << EOF > '$PUNK_AUTO'
+	if [[ ! -z "\$ZSH_VERSION" ]]
 	then
 		autoload cominit
 		autoload bashcompinit
@@ -243,18 +241,15 @@ cat > $PUNK_AUTO << EOF
 		COMPREPLY=()
 		cur="\${COMP_WORDS[COMP_CWORD]}"
 		prev="\${COMP_WORDS[COMP_CWORD-1]}"
-		opts=\$(cat $PUNK_SRC 2>/dev/null |\
-			grep -P 'shelp\s"[^"]+"\s*"[^"]+"' |\
-			cut -d"\"" -f2 |\
-			cut -d" " -f1)
+		opts=\$(cat '$PUNK_SRC' 2>/dev/null | grep -P '"'"'phelp\s"[^"]+"\s*"[^"]+"'"'"' | cut -d"\"" -f2 | cut -d" " -f1)
 
-		if [[ ! -z "\$opts" ]] && [[ "$\prev" = "$PUNK_EXEC" ]]
+		if [[ ! -z "\$opts" ]] && [[ "\$prev" = '$PUNK_BIN' ]]
 		then
 			COMPREPLY=( \$(compgen -W "\${opts}" -- \${cur}) )
 		fi
 	}
 	complete -F _punk punk
-EOF
+EOF'
 
 	# setup bash
 	# logname means current user
@@ -273,9 +268,13 @@ EOF
 	if [[ -f "$zshrc" ]];then
 		if ! grep -Fxq "source $PUNK_AUTO" $zshrc
 		then
-			printf "\source %s" $PUNK_AUTO >> $zshrc
+			printf "\nsource %s" $PUNK_AUTO >> $zshrc
 			source $PUNK_AUTO
 		fi
+	else
+		sudo touch $zshrc
+		printf "\nsource %s" $PUNK_AUTO >> $zshrc
+		source $PUNK_AUTO
 	fi
 }
 
@@ -286,14 +285,14 @@ main() {
 	fi
 
 	if [[ ! -w "$INSTALL_DIR" ]];then
-		printf "⛔ ${RED_BG}must be root to install. ${CEND}\n"
+		printf "⛔  ${RED_BG}must be root to install. ${CEND}\n"
 		exit
 	fi
 
 	banner
 
 	if [[ ! -f "punk" ]]; then
-		printf "✈️ ${BLUE}Downloading......... ${CEND}\n"
+		printf "✈️  ${BLUE}Downloading......... ${CEND}\n"
 		
 		if ! command_exist "git"; then
 			need_install_manually "git"
@@ -307,10 +306,9 @@ main() {
 
 	CUR_DIR="$( pwd )"
 	
-	printf "\n ✏️ ${BLUE}OK, there is a questions need u answer before install process. Just press ${GREEN}ENTER ${BLUE}if u want use default config. ${CEND}\n"
+	printf "\n✏️   ${BLUE}OK, there is a questions need u answer before install process. Just press ${GREEN}ENTER ${BLUE}if u want use default config. ${CEND}\n"
 
-	asking EDITOR "which is your favourite editor?" "vi"
-	printf "\n"
+	asking EDITOR "Which is your favourite editor?" "vi"
 	
 	# DEFAULT_SHELL 0:bash 1:zsh
 	DEFAULT_SHELL=0
@@ -328,16 +326,33 @@ main() {
 	chmod +x $PUNK_SRC
 
 	# create the auto-completetion file
-	PUNK_AUTO="/etc/bash_completion.d/punk_completion"
+	if [[ -d "/etc/bash_completion.d/" ]];then
+		PUNK_AUTO="/etc/bash_completion.d/punk_completion"
+	else
+		sudo mkdir -p /etc/bash_completion.d/
+		PUNK_AUTO="/etc/bash_completion.d/punk_completion"
+	fi
 	setup_autocomplete
 
-	printf "\n🤟 ${GREEN}OK, everything is ready, we'll install a series of dependencies.\n"
+	printf "\n🤟  ${GREEN}OK, everything is ready, we'll install a series of dependencies.${CEND}\n"
 
 	# command             # on mac             # on centos7
 	install_spawn         wget                 wget
 	install_spawn         curl                 curl
 	install_spawn         nmap                 nmap
 	install_spawn         zsh                  zsh
+
+	# switch to DEFAULT_SHELL
+	if [[ $DEFAULT_SHELL -eq 0 ]];then
+		chsh -s /bin/bash > /dev/null 2>&1 &
+	else
+		# 0 means true, 1 means false
+		if ! grep -Fxq "/bin/zsh" /etc/shells;then
+			requirement_not_exist "zsh"
+		else
+			chsh -s /bin/zsh > /dev/null 2>&1 &
+		fi
+	fi
 }
 
 # $@: all parameters
